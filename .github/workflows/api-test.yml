@@ -18,20 +18,12 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install Newman & HTML reporter
-        run: |
-          npm install -g newman newman-reporter-htmlextra
+      - name: Install Newman
+        run: npm install -g newman
 
       - name: Run API tests with Newman
         run: |
-          mkdir -p reports
           newman run tests/brand/brand.postman_collection.json \
-            -d tests/brand/product.csv \
-            --reporters cli,htmlextra \
-            --reporter-htmlextra-export reports/brand-report.html
-
-      - name: Upload Newman HTML report
-        uses: actions/upload-artifact@v3
-        with:
-          name: brand-api-test-report
-          path: reports/brand-report.html
+          -d tests/brand/product.csv \
+          --reporters cli,html \
+          --reporter-html-export reports/brand-report.html
