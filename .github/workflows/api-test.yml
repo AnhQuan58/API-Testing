@@ -23,7 +23,10 @@ jobs:
         run: |
           npm install -g newman
           npm install -g newman-reporter-html
-    
+      - name: Start API server
+        run: |
+          npm start &  # chạy nền
+          sleep 10     # đợi server khởi động (thay đổi tuỳ server)
       - name: Run API tests with Newman
         run: |
           newman run tests/brand/brand.postman_collection.json \
