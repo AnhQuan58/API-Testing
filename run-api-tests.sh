@@ -25,5 +25,10 @@ fi
 # Run tests
 # TODO (Bạn thêm code ở dưới đây)
 
+newman run tests/brand/brand.postman_collection.json \
+    -d tests/brand/product.csv \
+    --reporters cli,html \
+    --reporter-html-export reports/brand-report.html
+
 # Cleanup (optional)
 docker compose down

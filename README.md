@@ -99,8 +99,7 @@ docker compose exec laravel-api php artisan migrate:fresh --seed --force
     Mở terminal, di chuyển đến thư mục gốc của project và chạy lệnh sau:
 
     ```bash
-    chmod +x run-api-tests.sh
-    ./run-api-tests.sh
+    chmod +x run-api-tests.sh ./run-api-tests.sh
     ```
 
     Nếu gặp lỗi "Permission denied", bạn cần cấp quyền thực thi cho script bằng lệnh `chmod +x run-api-tests.sh` trước khi chạy.

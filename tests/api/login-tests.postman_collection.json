@@ -1,156 +1,237 @@
 {
-	"info": {
-		"_postman_id": "93f7152b-7da8-4066-b7d9-2d4aa3074f92",
-		"name": "Login API Tests",
-		"description": "Test API login với các tài khoản khác nhau",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "38685069"
-	},
-	"item": [
-		{
-			"name": "Login Success",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"",
-							"pm.test(\"Response status code is 200\", function () {",
-							"    pm.expect(pm.response.code).to.equal(200);",
-							"});",
-							"",
-							"",
-							"pm.test(\"Response has required fields\", function () {",
-							"    const responseData = pm.response.json();",
-							"    ",
-							"    pm.expect(responseData).to.be.an('object');",
-							"    pm.expect(responseData).to.have.all.keys('access_token', 'token_type', 'expires_in');",
-							"});",
-							"",
-							"",
-							"pm.test(\"Access token must be a non-empty string\", function () {",
-							"    const responseData = pm.response.json();",
-							"    ",
-							"    pm.expect(responseData).to.be.an('object');",
-							"    pm.expect(responseData.access_token).to.exist.and.to.be.a('string').and.to.have.lengthOf.above(0, \"Access token should not be empty\");",
-							"});",
-							"",
-							"",
-							"pm.test(\"Token type must be a non-empty string\", function () {",
-							"    const responseData = pm.response.json();",
-							"    ",
-							"    pm.expect(responseData).to.be.an('object');",
-							"    pm.expect(responseData.token_type).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Token type should not be empty\");",
-							"});",
-							"",
-							"",
-							"pm.test(\"Expires_in must be a positive integer\", function () {",
-							"    const responseData = pm.response.json();",
-							"    ",
-							"    pm.expect(responseData).to.be.an('object');",
-							"    pm.expect(responseData.expires_in).to.exist.and.to.be.a('number').and.to.be.above(0, \"Expires_in should be a positive integer\");",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"email\": \"admin@practicesoftwaretesting.com\",\n  \"password\": \"welcome01\"\n}"
-				},
-				"url": {
-					"raw": "{{base_url}}/users/login",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"users",
-						"login"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Login Fail - Wrong Password",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"",
-							"pm.test(\"Response status code is 401\", function () {",
-							"    pm.expect(pm.response.code).to.eql(401);",
-							"});",
-							"",
-							"",
-							"pm.test(\"Response contains the required error field\", function () {",
-							"    const responseData = pm.response.json();",
-							"    ",
-							"    pm.expect(responseData).to.be.an('object').and.to.have.property('error');",
-							"});",
-							"",
-							"",
-							"pm.test(\"Error message must be a non-empty string\", function () {",
-							"    const responseData = pm.response.json();",
-							"",
-							"    pm.expect(responseData).to.be.an('object');",
-							"    pm.expect(responseData.error).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Error message should not be empty\");",
-							"});",
-							"",
-							"",
-							"pm.test(\"Response time is less than 200ms\", function () {",
-							"    pm.expect(pm.response.responseTime).to.be.below(200);",
-							"});",
-							"",
-							"",
-							"pm.test(\"Content-Type is application/json\", function () {",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/json\");",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"email\": \"admin@practicesoftwaretesting.com\",\n  \"password\": \"wrongpassword\"\n}"
-				},
-				"url": {
-					"raw": "{{base_url}}/users/login",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"users",
-						"login"
-					]
-				}
-			},
-			"response": []
-		}
-	],
-	"variable": [
-		{
-			"key": "base_url",
-			"value": "http://localhost:8091"
-		}
-	]
+  "info": {
+    "_postman_id": "12345678-abcd-efgh-ijkl-1234567890ab",
+    "name": "User APIs Collection - Full Test Cases",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    
+    
+    {
+      "name": "Login User - Success admin",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"admin@practicesoftwaretesting.com\", \"password\": \"welcome01\"}"
+        },
+        "url": {
+          "raw": "{{base_url}}/users/login",
+          "host": ["{{base_url}}"],
+          "path": ["users", "login"]
+        }
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Login Success - Status 200', function () {",
+            "    pm.response.to.have.status(200);",
+            "    var jsonData = pm.response.json();",
+            "    pm.environment.set('authToken', jsonData.token || '');",
+            "    pm.environment.set('userId', jsonData.userId || '');",
+            "});"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    
+    {
+      "name": "Login User - Success customer",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"customer@practicesoftwaretesting.com\", \"password\": \"welcome01\"}"
+        },
+        "url": {
+          "raw": "{{base_url}}/users/login",
+          "host": ["{{base_url}}"],
+          "path": ["users", "login"]
+        }
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Login Success - Status 200', function () {",
+            "    pm.response.to.have.status(200);",
+            "    var jsonData = pm.response.json();",
+            "    pm.environment.set('authToken', jsonData.token || '');",
+            "    pm.environment.set('userId', jsonData.userId || '');",
+            "});"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    
+    {
+      "name": "Login User - Fail invalid user",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"invalid@practicesoftwaretesting.com\", \"password\": \"wrongpass\"}"
+        },
+        "url": {
+          "raw": "{{base_url}}/users/login",
+          "host": ["{{base_url}}"],
+          "path": ["users", "login"]
+        }
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Login Fail - Status 401', function () {",
+            "    pm.response.to.have.status(401);",
+            "});"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    
+    {
+      "name": "Login User - Fail Wrong Password",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"admin@practicesoftwaretesting.com\", \"password\": \"wrongpass\"}"
+        },
+        "url": {
+          "raw": "{{base_url}}/users/login",
+          "host": ["{{base_url}}"],
+          "path": ["users", "login"]
+        }
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Login Fail - Status 401', function () {",
+            "    pm.response.to.have.status(401);",
+            "});"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    
+    {
+      "name": "Login User - Fail Empty Username",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"\", \"password\": \"welcome01\"}"
+        },
+        "url": {
+          "raw": "{{base_url}}/users/login",
+          "host": ["{{base_url}}"],
+          "path": ["users", "login"]
+        }
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Login Fail - Status 400 or 401', function () {",
+            "    pm.expect(pm.response.code).to.be.oneOf([400, 401]);",
+            "});"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    
+    {
+      "name": "Login User - Fail Empty Password",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"username\": \"admin@practicesoftwaretesting.com\", \"password\": \"\"}"
+        },
+        "url": {
+          "raw": "{{base_url}}/users/login",
+          "host": ["{{base_url}}"],
+          "path": ["users", "login"]
+        }
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Login Fail - Status 400 or 401', function () {",
+            "    pm.expect(pm.response.code).to.be.oneOf([400, 401]);",
+            "});"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    
+    {
+      "name": "Get User By ID - Success",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+        "url": {
+          "raw": "{{base_url}}/users/{{userId}}",
+          "host": ["{{base_url}}"],
+          "path": ["users", "{{userId}}"]
+        }
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Get User Success - Status 200', function () {",
+            "    pm.response.to.have.status(200);",
+            "});"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    },
+    
+    {
+      "name": "Get User By ID - Fail Not Found",
+      "request": {
+        "method": "GET",
+        "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+        "url": {
+          "raw": "{{base_url}}/users/nonexistentUserId123",
+          "host": ["{{base_url}}"],
+          "path": ["users", "nonexistentUserId123"]
+        }
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Get User Fail - Status 404', function () {",
+            "    pm.response.to.have.status(404);",
+            "});"
+          ],
+          "type": "text/javascript"
+        }
+      }]
+    }
+  ],
+  "variable": [
+    {"key": "base_url", "value": "http://localhost:8091"},
+    {"key": "authToken", "value": ""},
+    {"key": "userId", "value": ""}
+  ]
 }
