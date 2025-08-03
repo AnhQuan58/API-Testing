@@ -69,7 +69,7 @@ jobs:
         echo "🔍 Running Newman tests..."
         # Chạy kiểm thử với báo cáo HTML
         newman run tests/api/login-tests.postman_collection.json \
-          -d tests/api/user-accounts.csv \
+          -data tests/api/user-accounts.csv \
           --environment tests/api/environment.json \
           --reporters cli,htmlextra \
           --reporter-htmlextra-export test-report.html \
