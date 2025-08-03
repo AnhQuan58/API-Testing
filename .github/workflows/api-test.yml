@@ -23,6 +23,15 @@ jobs:
           npm install -g newman
           npm install -g newman-reporter-html
 
+      - name: Install dependencies
+        run: npm install
+
+      - name: Start Brands API (background)
+        run: npm start &
+      # Thêm delay để API ready:
+      - name: Wait for API to be ready
+        run: npx wait-on http://localhost:8091/brands
+
       - name: Run API tests with Newman
         run: |
           newman run tests/brand/brand.postman_collection.json \
