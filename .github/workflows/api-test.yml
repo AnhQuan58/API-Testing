@@ -10,19 +10,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🛒 Checkout code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: 📦 Install Node.js
+      - name: Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      - name: 📥 Install Newman & HTML reporter
+      - name: Install Newman & HTML reporter
         run: |
           npm install -g newman newman-reporter-htmlextra
 
-      - name: 🧪 Run API tests with Newman
+      - name: Run API tests with Newman
         run: |
           mkdir -p reports
           newman run tests/brand/brand.postman_collection.json \
@@ -30,7 +30,7 @@ jobs:
             --reporters cli,htmlextra \
             --reporter-htmlextra-export reports/brand-report.html
 
-      - name: 📤 Upload Newman HTML report
+      - name: Upload Newman HTML report
         uses: actions/upload-artifact@v3
         with:
           name: brand-api-test-report
