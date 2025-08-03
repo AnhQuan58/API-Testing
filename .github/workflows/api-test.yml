@@ -13,6 +13,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Bước 3: Khởi động các container Docker
+      - name: Start Docker Containers 🐳
+        run: docker compose up -d
+
+    # Bước 4: Chờ các dịch vụ sẵn sàng
+      - name: Wait for Services ⏳
+        run: sleep 60
+        shell: bash
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
@@ -29,3 +37,16 @@ jobs:
           -d tests/brand/product.csv \
           --reporters cli,html \
           --reporter-html-export reports/brand-report.html
+
+      # Bước 8: Upload báo cáo (luôn chạy)
+      - name: Upload Test Report 📊
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-test-report
+          path: test-report.html
+
+      # Bước 9: Dọn dẹp (luôn chạy)
+      - name: Cleanup 🧹
+        if: always()
+        run: docker compose down -v
