@@ -18,18 +18,18 @@ jobs:
       uses: actions/checkout@v4
 
     # Bước 2: Tạo file .env từ template và secrets
-    # - name: Create Laravel .env file 🔧
-    #   env:
-    #     APP_KEY: ${{ secrets.APP_KEY }}
-    #     DB_DATABASE: ${{ secrets.DB_DATABASE }}
-    #     DB_USERNAME: ${{ secrets.DB_USERNAME }}
-    #     DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-    #     JWT_SECRET: ${{ secrets.JWT_SECRET }}
-    #   run: |
-    #     echo "🔧 Creating Laravel .env file from .env.ci template..."
-    #     # Lệnh envsubst sẽ đọc file .env.ci, tìm các biến $VAR và thay bằng giá trị từ secrets
-    #     envsubst < sprint5-with-bugs/API/.env.ci > sprint5-with-bugs/API/.env
-    #     echo "✅ .env file created successfully."
+    - name: Create Laravel .env file 🔧
+      env:
+        APP_KEY: ${{ secrets.APP_KEY }}
+        DB_DATABASE: ${{ secrets.DB_DATABASE }}
+        DB_USERNAME: ${{ secrets.DB_USERNAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      run: |
+        echo "🔧 Creating Laravel .env file from .env.ci template..."
+        # Lệnh envsubst sẽ đọc file .env.ci, tìm các biến $VAR và thay bằng giá trị từ secrets
+        envsubst < sprint5-with-bugs/API/.env.ci > sprint5-with-bugs/API/.env
+        echo "✅ .env file created successfully."
 
     # Bước 3: Khởi động các container Docker
     - name: Start Docker Containers 🐳
