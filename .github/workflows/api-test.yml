@@ -27,8 +27,7 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install Newman
-        run: npm install -g newman
+      
       
       - run: npm install -g newman newman-reporter-htmlextra
 
