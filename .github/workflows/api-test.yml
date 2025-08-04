@@ -21,10 +21,8 @@ jobs:
       - name: Install Newman
         run: npm install -g newman
       
-      - name: Install Newman and htmlextra reporter
-        run: |
-          npm install -g newman newman-reporter-htmlextra
-          
+      - run: npm install -g newman newman-reporter-htmlextra
+
       - name: Run API tests with Newman
         run: |
           newman run tests/brand/brand.postman_collection.json -d tests/brand/product.csv --environment tests/brand/environment.json --reporters cli,htmlextra --reporter-htmlextra-export test-report.html --reporter-htmlextra-title "API Test Report" --reporter-htmlextra-showEnvironmentData true --reporter-htmlextra-showFolderDescription true
