@@ -26,8 +26,4 @@ jobs:
       - name: Run API tests with Newman
         run: |
           newman run tests/brand/brand.postman_collection.json -d tests/brand/product.csv --environment tests/brand/environment.json --reporters cli,htmlextra --reporter-htmlextra-export test-report.html --reporter-htmlextra-title "API Test Report" --reporter-htmlextra-showEnvironmentData true --reporter-htmlextra-showFolderDescription true
-      - name: Upload HTML report as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: api-test-report
-          path: test-report.html
+      
