@@ -1,37 +1,121 @@
-name: Run API Tests with Newman
+# Name of the process
+name: Laravel CI/CD with Newman Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main, develop]
   pull_request:
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      # Step 1: Checkout code from repository
+      - name: Checkout Code ⚙️
+        uses: actions/checkout@v4
 
-      # Bước 3: Khởi động các container Docker
-      - name: Start Docker Containers 🐳
+      # Step 2: Create .env file with hardcoded values
+      - name: Create Laravel .env file 🔧
+        run: |
+          echo "🔧 Creating Laravel .env file..."
+          cat > sprint5-with-bugs/API/.env << 'EOF'
+          APP_NAME=Toolshop
+          APP_VERSION=5
+          APP_ENV=local
+          APP_KEY=base64:hJawExRAnwWOUI0a/YBWH+yRHJWCKYpwItOUFQdcFo4=
+          JWT_SECRET=XVVuj9s7byIX8XPNWt0aYOsFjmc4JZQmE2wR7h9IJXoEOWXwk6o6wM8AKUL7jUTy
+          APP_DEBUG=true
+          APP_URL=http://localhost:8091
+          APP_TIMEZONE=Europe/Amsterdam
+
+          LOG_CHANNEL=stack
+          LOG_DEPRECATIONS_CHANNEL=null
+          LOG_LEVEL=debug
+
+          DB_CONNECTION=mysql
+          DB_HOST=127.0.0.1
+          DB_PORT=3306
+          DB_DATABASE=toolshop
+          DB_USERNAME=root
+          DB_PASSWORD=root
+
+          BROADCAST_DRIVER=log
+          CACHE_DRIVER=file
+          FILESYSTEM_DISK=local
+          QUEUE_CONNECTION=database
+          SESSION_DRIVER=file
+          SESSION_LIFETIME=120
+
+          MAIL_MAILER=smtp
+          MAIL_HOST=mailcatcher
+          MAIL_PORT=1025
+          MAIL_USERNAME=null
+          MAIL_PASSWORD=null
+          EOF
+          echo "✅ .env file created successfully."
+
+      # Step 3: Start Docker Containers
+      - name: Start Docker Containers
         run: docker compose up -d
 
-      # Bước 4: Chờ các dịch vụ sẵn sàng
-      - name: Wait for Services ⏳
+      # Step 4: Wait for Services
+      - name: Wait for Services
         run: sleep 60
         shell: bash
 
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+      # Step 5: Setup Application
+      - name: Setup Application 🔧
+        run: |
+          echo " Installing Composer dependencies..."
+          # Using the 'composer' service defined in docker-compose.yml
+          docker compose run --rm composer
 
-      
-      
+          echo " Fixing permissions..."
+          # Grant access permissions for the storage and cache directories
+          docker compose exec -T -u root laravel-api chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+
+          echo " Running database migrations and seeding..."
+          # Run migrate & seed
+          docker compose exec -T laravel-api php artisan migrate:fresh --seed --force
+
+      # Step 6: Install Node.js & Newman
+      - name: Install Node.js & Newman
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
       - run: npm install -g newman newman-reporter-htmlextra
 
-      - name: Run API tests with Newman
+      # Step 7: Run Newman Tests
+      - name: Run Newman Tests
+        # Newman here
         run: |
-          newman run tests/brand/brand.postman_collection.json -d tests/brand/product.csv --environment tests/brand/environment.json --reporters cli,htmlextra --reporter-htmlextra-export test-report.html --reporter-htmlextra-title "API Test Report" --reporter-htmlextra-showEnvironmentData true --reporter-htmlextra-showFolderDescription true
-      
+          echo "API Login Tests"
+          newman run "tests/api/1_Login.postman_collection.json" --iteration-data "tests/api/data/1_login.json" --reporters "cli,htmlextra" --reporter-htmlextra-export "tests/api/report/1_Login_detailed-result.html" --reporter-htmlextra-title "API Login Tests Report" --reporter-htmlextra-logs --verbose --suppress-exit-code
+
+          echo "Refreshing database..."
+          docker compose exec -T laravel-api php artisan migrate:fresh --seed
+
+          echo "API User Details Tests"
+          newman run "tests/api/2_me.postman_collection.json" --iteration-data "tests/api/data/2_me.json" --reporters "cli,htmlextra" --reporter-htmlextra-export "tests/api/report/2_User_Details_detailed-result.html" --reporter-htmlextra-title "API User Details Tests Report" --reporter-htmlextra-logs --verbose --suppress-exit-code
+
+          echo "Refreshing database..."
+          docker compose exec -T laravel-api php artisan migrate:fresh --seed
+
+          echo "API Change Password Tests"
+          newman run "tests/api/3_Change_password.postman_collection.json" --iteration-data "tests/api/data/3_change_password.json" --reporters "cli,htmlextra" --reporter-htmlextra-export "tests/api/report/3_Change_Password_detailed-result.html" --reporter-htmlextra-title "API Change Password Tests Report" --reporter-htmlextra-logs --verbose --suppress-exit-code
+
+      # Step 8: Upload Test Reports (always run)
+      - name: Upload Test Reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: newman-reports
+          path: tests/api/report/*.html
+
+      # Step 9: Cleanup (always run)
+      - name: Cleanup
+        if: always()
+        run: docker compose down -v
